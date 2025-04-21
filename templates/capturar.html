@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% block title %}Capturar Imagen{% endblock %}
+
+{% block extra_styles %}
+<style>
+    .content-detectar {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+        padding: 1rem;
+    }
+
+    #video_cap,#img_cap{
+        display: flex;
+        justify-content: center;
+    }
+
+    video,
+    img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        margin-top: 1rem;
+    }
+
+    #result {
+        margin-top: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %} <h2>Capturar imagen y detectar hongos</h2>
+
+<div class="content-detectar">
+    
+    
+    <button onclick="captureAndSend()" class="btn btn-primary">Capturar</button>
+    <div id="video_cap">
+        <video id="video" autoplay playsinline width="640" height="480"></video>
+    </div>
+
+    <div id="result">
+        <h3>Resultado</h3>
+        <div id="img_cap">
+            <img id="output" />
+        </div>
+        <p id="error-rate" style="font-weight: bold;"></p>
+    </div>
+</div>
+
+<script>
+    // console.log("navigator:", navigator);
+    // if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    //   alert("Tu navegador no soporta acceso a la camara con getUserMedia");
+    // } else {
+    //   alert("�Tu navegador si soporta getUserMedia!");
+    // }
+
+    const video = document.getElementById("video");
+    const resultfetch = document.getElementById('result')
+    resultfetch.style.display = 'none'
+
+    // Solicitar acceso a la c�mara
+    navigator.mediaDevices.getUserMedia({ video: true })
+        .then(stream => {
+            video.srcObject = stream;
+        })
+        .catch(err => {
+            alert("Error al acceder a la c�mara: " + err);
+        });
+
+
+    function captureAndSend() {
+        const canvas = document.createElement("canvas");
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const context = canvas.getContext("2d");
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        const dataUrl = canvas.toDataURL("image/jpeg");
+
+        fetch("/captura", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ image: dataUrl })
+        })
+            .then(res => res.json())
+            .then(data => {
+                console.log(data)
+                if (data.image) {
+                    resultfetch.style.display = 'block'
+                    document.getElementById("output").src = data.image;
+                    document.getElementById("error-rate").innerText = `Tasa de error: ${data.tasa_error}%`;
+                } else {
+                    alert("Error al procesar la imagen");
+                }
+            })
+            .catch(err => {
+                console.error("Error:", err);
+            });
+    }
+</script>
+
+{% endblock %}

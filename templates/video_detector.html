@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Deteccion de Hongos{% endblock %}
+
+{% block extra_styles %}
+<style>
+    #videoContainer {
+        max-width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+
+    img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        margin-top: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<h2>Deteccion en Tiempo Real - Fruto del Tangelo</h2>
+
+<button onclick="startCamera()" class="btn btn-primary">Iniciar</button>
+<button onclick="stopCamera()" class="btn btn-danger">Detener</button>
+
+<div id="videoContainer" class="mt-2">
+    <img id="videoFeed" src="">
+</div>
+
+<script>
+    const videoFeed = document.getElementById('videoFeed');
+
+    function startCamera() {
+        videoFeed.src = '/video';
+        videoFeed.style.display = 'block';
+    }
+
+    function stopCamera() {
+        videoFeed.src = '';
+        videoFeed.style.display = 'none';
+    }
+</script>
+{% endblock %}

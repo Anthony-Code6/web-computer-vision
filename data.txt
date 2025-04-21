@@ -1,0 +1,62 @@
+import numpy as np
+import cv2
+import mediapipe as mp
+from mediapipe.tasks import python
+from mediapipe.tasks.python import vision
+from supabase_method import descargar_modelo_desde_supabase
+
+MARGIN = -1
+ROW_SIZE = 10
+FONT_SIZE = 2
+FONT_THICKNESS = 1
+rect_color_GREEN = (66, 255, 0)
+rect_color_RED = (227, 7, 34)
+TEXT_COLOR = (255, 255, 255)
+
+# Descargar el modelo desde Supabase
+model_path = descargar_modelo_desde_supabase()
+
+# Configurar MediaPipe
+base_options = python.BaseOptions(model_asset_path=model_path)
+options = vision.ObjectDetectorOptions(base_options=base_options, score_threshold=0.5)
+detector = vision.ObjectDetector.create_from_options(options)
+
+# Generador de frames
+def generar_frames2():
+    cap = cv2.VideoCapture(0)
+
+    # ?? Mejora sugerida: Ajuste de resoluci�n y framerate para evitar retrasos
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 850)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 630)
+    cap.set(cv2.CAP_PROP_FPS, 15)  # Controlamos a ~15 FPS para estabilidad
+
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            break
+
+        frame = cv2.flip(frame, 1)  # Ya no necesitas redimensionar, est� ajustado por set()
+
+        # Crear imagen para MediaPipe
+        mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=frame)
+        detection_result = detector.detect(mp_image)
+
+        # Dibujar resultados
+        for detection in detection_result.detections:
+            bbox = detection.bounding_box
+            x, y, w, h = int(bbox.origin_x), int(bbox.origin_y), int(bbox.width), int(bbox.height)
+            category = detection.categories[0]
+            category_name = category.category_name
+            probability = round(category.score, 2)
+            result_text = f"{category_name} ({probability})"
+
+            color = rect_color_GREEN if category_name == 'SIN_HONGO' else rect_color_RED
+
+            cv2.rectangle(frame, (x, y), (x + w, y + h), color, 3)
+            cv2.putText(frame, result_text, (x, y - 10), cv2.FONT_HERSHEY_PLAIN,
+                        FONT_SIZE, TEXT_COLOR, FONT_THICKNESS)
+
+        ret, buffer = cv2.imencode('.jpg', frame)
+        frame = buffer.tobytes()
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
