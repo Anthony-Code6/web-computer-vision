@@ -1,10 +1,13 @@
 import os
 from supabase import create_client
+import cv2
+from datetime import datetime
 
 # Configuraci�n de Supabase (puedes mover esto a variables de entorno si lo deseas)
 SUPABASE_URL = "https://bhnktceuzfjvgbpkoumz.supabase.co"
 SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJobmt0Y2V1emZqdmdicGtvdW16Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2NzUxMTksImV4cCI6MjA2MDI1MTExOX0.6BBAuD_FaU74dWZl0p8kV-d90KE5bIOO6Hq7HztRTd0"
 BUCKET_NAME = "model"
+BUCKET_NAME_HONGO = "detecciones"
 
 # Crear cliente de Supabase
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
@@ -50,8 +53,6 @@ def descargar_modelo_desde_supabase(nombre_remoto: str = "best.tflite", ruta_loc
         # print(f"? Error al descargar archivo desde Supabase: {e}")
         raise
 
-
-
 # Historial
 def insert_historial(nombre_archivo,tamano_bytes):
     # Calcular tama�os
@@ -67,10 +68,9 @@ def insert_historial(nombre_archivo,tamano_bytes):
             "mb": f"{round(tamano_mb, 2)} MB"
         }
         supabase.table("historial").insert(data).execute()
-        print("? Registro guardado en Supabase.")
+        #print("Registro guardado en Supabase.")
     except Exception as e:
-        print(f"? Error al guardar en Supabase: {e}")
-
+        print(f"Error al guardar en Supabase: {e}")
 
 def obtener_historial():
     try:
@@ -79,3 +79,26 @@ def obtener_historial():
     except Exception as e:
         print(f"? Error al obtener historial: {e}")
         return []
+
+# Detecciones
+
+def insert_Detecciones(estado, confianza, imagen_url, tiempo_procesamiento):
+    try:
+        fecha_hora = datetime.now().isoformat()
+        data = {
+            "imagen_url": imagen_url,
+            "estado": estado,
+            "confianza": confianza,
+            "tiempo_procesamiento": tiempo_procesamiento
+        }
+        supabase.table("detecciones").insert(data).execute()
+        print("Se guardo la deteccions")
+    except Exception as e:
+        print(f"Error al guardar en Supabase: {e}")
+
+def guardar_imagen_hongo(frame,nombre_archivo):
+    ruta_local = f"/tmp/{nombre_archivo}"
+    cv2.imwrite(ruta_local, frame)
+    with open(ruta_local, "rb") as f:
+        supabase.storage.from_("detecciones").upload(f"detecciones/{nombre_archivo}", f, {"content-type": "image/jpeg"})
+    return f"{SUPABASE_URL}/storage/v1/object/public/detecciones/detecciones/{nombre_archivo}"
