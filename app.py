@@ -82,9 +82,9 @@ def eliminar_deteccion():
         # Eliminar registro en tabla detecciones
         deteccion_dlt(id)
         # Obtener el nombre del archivo desde la URL
-        filename = os.path.basename(imagen_url)
-        # Eliminar del storage 
-        delete_imagen(filename)
+        nombre_archivo = os.path.basename(imagen_url)
+        delete_imagen(nombre_archivo)
+
         return jsonify({"success": True, "message": "Deteccion eliminada"})
     except Exception as e:
         return jsonify({"success": False, "message": str(e)}), 500

@@ -20,13 +20,13 @@
 </style>
 {% endblock %}
 
-{% block scripts %}
-<script async src="{{ url_for('static', filename='detecciones.js') }}"></script>
-{% endblock %}
 
 {% block content %}
 <div class="container">
     <div class="row g-3 justify-content-center mt-3 mb-3" id="row-data"></div>
-    
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='detecciones.js') }}"></script>
 {% endblock %}

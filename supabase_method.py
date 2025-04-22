@@ -61,12 +61,12 @@ def download_model(nombre_remoto: str = "best.tflite", ruta_local: str = "/tmp/b
 
 def delete_imagen(file):
     try:
-        # Eliminar imagen
         supabase.storage.from_(BUCKET_NAME_HONGO).remove([file])
-        # print('Archivo Eliminado')
+        print('Archivo eliminado:', file)
     except Exception as e:
-        # print(f"Error al eliminar imagen a Supabase: {e}")
+        print(f"Error al eliminar imagen de Supabase: {e}")
         raise
+
 
 
 # Historial
