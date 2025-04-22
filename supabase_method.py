@@ -14,6 +14,14 @@ supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # Storage
 
+def file_sellst():
+    try:
+        archivos_bucket = supabase.storage.from_(BUCKET_NAME_HONGO).list()
+        return archivos_bucket
+    except Exception as e:
+        print('Error al listar los archivos: {e}')
+        return []
+
 def upload_model(ruta_archivo_local: str, nombre_remoto: str = "best.tflite"):
     try:
         # Eliminar archivos previos del bucket
@@ -98,17 +106,25 @@ def historial_sellst():
 
 # Detecciones
 
+def detecciones_url_sellst():
+    try:
+        registros = supabase.table("detecciones").select("imagen_url").execute()
+        urls_registradas = [r["imagen_url"] for r in registros.data]
+
+        nombres_en_tabla = set(os.path.basename(url) for url in urls_registradas)
+        return nombres_en_tabla
+    except Exception as e:
+        print('Error al listar las imagen detecciones: {e}')
+        return []
+
 def detecciones_ins(estado, confianza, imagen_url, tiempo_procesamiento):
     try:
-
-        # Normalizar confianza: convertir a porcentaje si esta en [0, 1]
         if confianza <= 1.0:
             confianza = round(confianza * 100, 2)
         else:
             confianza = round(confianza, 2)
 
-        # Normalizar tiempo_procesamiento: convertir milisegundos a segundos si es muy alto
-        if tiempo_procesamiento > 10:  # Si es mayor a 10 segundos, probablemente esta en milisegundos
+        if tiempo_procesamiento > 10:  
             tiempo_procesamiento = round(tiempo_procesamiento / 1000, 4)
         else:
             tiempo_procesamiento = round(tiempo_procesamiento, 4)
