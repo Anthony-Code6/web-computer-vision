@@ -14,7 +14,7 @@ supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # Storage
 
-def subir_modelo_a_supabase(ruta_archivo_local: str, nombre_remoto: str = "best.tflite"):
+def upload_model(ruta_archivo_local: str, nombre_remoto: str = "best.tflite"):
     try:
         # Eliminar archivos previos del bucket
         archivos = supabase.storage.from_(BUCKET_NAME).list()
@@ -35,8 +35,14 @@ def subir_modelo_a_supabase(ruta_archivo_local: str, nombre_remoto: str = "best.
         # print(f"Error al subir archivo a Supabase: {e}")
         raise
 
+def upload_imagen(frame,nombre_archivo):
+    ruta_local = f"/tmp/{nombre_archivo}"
+    cv2.imwrite(ruta_local, frame)
+    with open(ruta_local, "rb") as f:
+        supabase.storage.from_("detecciones").upload(f"{nombre_archivo}", f, {"content-type": "image/jpeg"})
+    return f"{SUPABASE_URL}/storage/v1/object/public/detecciones/{nombre_archivo}"
 
-def descargar_modelo_desde_supabase(nombre_remoto: str = "best.tflite", ruta_local: str = "/tmp/best.tflite"):
+def download_model(nombre_remoto: str = "best.tflite", ruta_local: str = "/tmp/best.tflite"):
     """
     Descarga un modelo .tflite desde Supabase Storage y lo guarda localmente.
 
@@ -53,8 +59,18 @@ def descargar_modelo_desde_supabase(nombre_remoto: str = "best.tflite", ruta_loc
         # print(f"? Error al descargar archivo desde Supabase: {e}")
         raise
 
+def delete_imagen(file):
+    try:
+        # Eliminar imagen
+        supabase.storage.from_(BUCKET_NAME_HONGO).remove([file])
+        # print('Archivo Eliminado')
+    except Exception as e:
+        # print(f"Error al eliminar imagen a Supabase: {e}")
+        raise
+
+
 # Historial
-def insert_historial(nombre_archivo,tamano_bytes):
+def historial_ins(nombre_archivo,tamano_bytes):
     # Calcular tama�os
     tamano_kb = tamano_bytes / 1024
     tamano_mb = tamano_kb / 1024
@@ -72,19 +88,31 @@ def insert_historial(nombre_archivo,tamano_bytes):
     except Exception as e:
         print(f"Error al guardar en Supabase: {e}")
 
-def obtener_historial():
+def historial_sellst():
     try:
         response = supabase.table("historial").select("*").execute()
         return response.data if response.data else []
     except Exception as e:
-        print(f"? Error al obtener historial: {e}")
+        print(f"Error al obtener historial: {e}")
         return []
 
 # Detecciones
 
-def insert_Detecciones(estado, confianza, imagen_url, tiempo_procesamiento):
+def detecciones_ins(estado, confianza, imagen_url, tiempo_procesamiento):
     try:
-        fecha_hora = datetime.now().isoformat()
+
+        # Normalizar confianza: convertir a porcentaje si esta en [0, 1]
+        if confianza <= 1.0:
+            confianza = round(confianza * 100, 2)
+        else:
+            confianza = round(confianza, 2)
+
+        # Normalizar tiempo_procesamiento: convertir milisegundos a segundos si es muy alto
+        if tiempo_procesamiento > 10:  # Si es mayor a 10 segundos, probablemente esta en milisegundos
+            tiempo_procesamiento = round(tiempo_procesamiento / 1000, 4)
+        else:
+            tiempo_procesamiento = round(tiempo_procesamiento, 4)
+
         data = {
             "imagen_url": imagen_url,
             "estado": estado,
@@ -96,27 +124,25 @@ def insert_Detecciones(estado, confianza, imagen_url, tiempo_procesamiento):
     except Exception as e:
         print(f"Error al guardar en Supabase: {e}")
 
-def guardar_imagen_hongo(frame,nombre_archivo):
-    ruta_local = f"/tmp/{nombre_archivo}"
-    cv2.imwrite(ruta_local, frame)
-    with open(ruta_local, "rb") as f:
-        supabase.storage.from_("detecciones").upload(f"detecciones/{nombre_archivo}", f, {"content-type": "image/jpeg"})
-    return f"{SUPABASE_URL}/storage/v1/object/public/detecciones/detecciones/{nombre_archivo}"
+def deteccion_dlt(id):
+    try:
+        supabase.table("detecciones").delete().eq("id", id).execute()
+    except Exception as e:
+        print('Error al eliminar {e}')
 
-# ----- Listar el top 5 de las detecciones
-def obtener_deteccion():
+
+# ----- Listar el top 10 de las detecciones
+def detecciones_error_sellst():
     try:
         errores = supabase.table("errores_clasificacion").select("deteccion_id").execute()
         ids_con_error = [e["deteccion_id"] for e in errores.data]
 
-        # 2. Obtener las �ltimas 10 detecciones que NO est�n en la lista de errores
         if ids_con_error:
             resp = supabase.table("detecciones").select("*")\
                 .not_.in_("id", ids_con_error)\
                 .order("fecha", desc=True)\
                 .limit(10).execute()
         else:
-            # Si no hay errores registrados, traer los �ltimos 10 sin filtrar
             resp = supabase.table("detecciones").select("*")\
                 .order("fecha", desc=True)\
                 .limit(10).execute()
@@ -127,7 +153,7 @@ def obtener_deteccion():
         return [] 
     
 # ----- Clasificacion de Errores -----
-def registrar_error(deteccion_id, tipo_error, comentario):
+def clasificacion_ins(deteccion_id, tipo_error, comentario):
     try:
         supabase.table('errores_clasificacion').insert({
             "deteccion_id": deteccion_id,

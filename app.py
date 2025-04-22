@@ -4,7 +4,7 @@ from PIL import Image
 import base64
 from detector import generar_frames
 from detector_service import detectar_en_imagen
-from supabase_method import subir_modelo_a_supabase,insert_historial,obtener_historial,obtener_deteccion,registrar_error
+from supabase_method import upload_model,historial_ins,historial_sellst,detecciones_error_sellst,clasificacion_ins,deteccion_dlt,delete_imagen
 from datetime import datetime
 import os
 
@@ -33,13 +33,13 @@ def importar():
             ruta_local = f"/tmp/{archivo.filename}"
             archivo.save(ruta_local)
             # Subir el archivo al Storage
-            subir_modelo_a_supabase(ruta_local, archivo.filename)
+            upload_model(ruta_local, archivo.filename)
             # Inserta la informacion en la tabla historial de supabase
-            insert_historial(archivo.filename, os.path.getsize(ruta_local))
+            historial_ins(archivo.filename, os.path.getsize(ruta_local))
             
             return redirect('/importar')
     
-    historial = obtener_historial()
+    historial = historial_sellst()
     return render_template('importar.html', historial=historial)
 
 @app.template_filter('datetimeformat')
@@ -54,16 +54,40 @@ def datetimeformat(value, format='%d/%m/%Y %H:%M:%S'):
 
 @app.route('/revisar')
 def revisar():
-    detecciones = obtener_deteccion()
-    return render_template('detecciones.html',detecciones = detecciones)
+    return render_template("detecciones.html")
 
-@app.route("/marcar_error", methods=["POST"])
+@app.route('/api/list-detections', methods=["GET"])
+def listDetections():
+    detecciones = detecciones_error_sellst()
+    return jsonify({
+        '_deteccion':detecciones
+    })
+
+@app.route("/api/marcar_error", methods=["POST"])
 def marcar_error():
-    deteccion_id = request.form["deteccion_id"]
-    tipo_error = request.form["tipo_error"]
-    comentario = request.form["comentario"]
-    registrar_error(deteccion_id, tipo_error, comentario)
-    return redirect("/revisar")
+    data = request.get_json()
+    deteccion_id = data.get("deteccion_id")
+    tipo_error = data.get("tipo_error")
+    comentario = data.get("comentario")
+    clasificacion_ins(deteccion_id, tipo_error, comentario)
+    return jsonify({"status": "ok"}), 201
+
+@app.route('/api/eliminar-deteccion', methods=['POST'])
+def eliminar_deteccion():
+    data = request.get_json()
+    id = data.get("id")
+    imagen_url = data.get("imagen_url")
+
+    try:
+        # Eliminar registro en tabla detecciones
+        deteccion_dlt(id)
+        # Obtener el nombre del archivo desde la URL
+        filename = os.path.basename(imagen_url)
+        # Eliminar del storage 
+        delete_imagen(filename)
+        return jsonify({"success": True, "message": "Deteccion eliminada"})
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 500
 
 
 # ----- Captura y retorna de informacion detallada -----

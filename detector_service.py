@@ -6,10 +6,10 @@ import cv2
 import mediapipe as mp
 from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
-from supabase_method import descargar_modelo_desde_supabase
+from supabase_method import download_model
 
 # Cargar el modelo desde Supabase
-local_model_path = descargar_modelo_desde_supabase()
+local_model_path = download_model()
 base_options = python.BaseOptions(model_asset_path=local_model_path)
 options = vision.ObjectDetectorOptions(base_options=base_options, score_threshold=0.5)
 detector = vision.ObjectDetector.create_from_options(options)

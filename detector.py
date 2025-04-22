@@ -6,7 +6,7 @@ from mediapipe.tasks.python import vision
 import uuid
 import threading
 import time
-from supabase_method import descargar_modelo_desde_supabase,guardar_imagen_hongo,insert_Detecciones
+from supabase_method import download_model,upload_imagen,detecciones_ins
 
 MARGIN = -1
 ROW_SIZE = 10
@@ -17,7 +17,7 @@ rect_color_RED = (227, 7, 34)
 TEXT_COLOR = (255, 255, 255)
 
 # Descargar el modelo desde Supabase .tflite
-model_path = descargar_modelo_desde_supabase()
+model_path = download_model()
 
 # Configurar MediaPipe
 base_options = python.BaseOptions(model_asset_path=model_path) # Define la ubicacion del modelo
@@ -28,8 +28,8 @@ def save_task(frame, estado, confianza, tiempo_procesamiento):
     estado_bool = True if estado.upper() == "HONGO" else False
     nombre_imagen = f"{uuid.uuid4()}.jpg"
 
-    url = guardar_imagen_hongo(frame,nombre_imagen)
-    insert_Detecciones(estado_bool ,confianza,url,tiempo_procesamiento)
+    url = upload_imagen(frame,nombre_imagen)
+    detecciones_ins(estado_bool ,confianza,url,tiempo_procesamiento)
 
 # Generador de frames
 def generar_frames():

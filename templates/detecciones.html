@@ -8,42 +8,25 @@
         field-sizing: content;
     }
 
-    .button{
-        margin-top: 8px;
+    .details {
         display: flex;
-        justify-content: center;
+        justify-content: space-between;
+        background-color: aliceblue;
+        border-radius: 10px;
+        padding: 8px 12px;
+        margin-bottom: 8px;
+        gap: 5px
     }
 </style>
 {% endblock %}
 
+{% block scripts %}
+<script async src="{{ url_for('static', filename='detecciones.js') }}"></script>
+{% endblock %}
+
 {% block content %}
 <div class="container">
-    <div class="row g-3 justify-content-center mt-3 mb-3">
-        {% for d in detecciones %}
-        <div class="col-lg-4 col-md-6 col-sm-12">
-            <div class="card">
-                <img src="{{ d.imagen_url }}" class="card-img-top" alt="{{d.id}}" loading="lazy">
-                <div class="card-body">
-                    Estado: {{ 'Hongo' if d.estado == 'Con Hongo' else 'Sin Hongo' }} | Confianza: {{ d.confianza }}
-                    <br>
-                    <form action="/marcar_error" method="POST">
-                        <input type="hidden" name="deteccion_id" value="{{ d.id }}">
-                        <label>Tipo de error:</label>
-                        <select name="tipo_error" class="form-select shadow-none" required>
-                            <option value="falso_positivo">Falso Positivo</option>
-                            <option value="falso_negativo">Falso Negativo</option>
-                        </select>
-                        <label>Comentario:</label>
-                        <textarea name="comentario" class="form-control shadow-none"
-                            placeholder="Comentario opcional..." required></textarea>
-                        <div class="button">
-                            <button type="submit" class="btn btn-primary">Registrar Error</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
+    <div class="row g-3 justify-content-center mt-3 mb-3" id="row-data"></div>
+    
 </div>
 {% endblock %}
