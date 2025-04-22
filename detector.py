@@ -60,7 +60,7 @@ def generar_frames():
             probability = round(category.score, 2)
 
             # Probabilidades
-            status_category_name = category_name if probability > 0.8 else 'SIN_HONGO'
+            status_category_name = category_name if probability > 0.7 else 'SIN_HONGO'
             result_text = f"{category_name} ({probability})"
 
             color = rect_color_GREEN if status_category_name == 'SIN_HONGO' else rect_color_RED

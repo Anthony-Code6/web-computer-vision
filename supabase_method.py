@@ -92,7 +92,7 @@ def insert_Detecciones(estado, confianza, imagen_url, tiempo_procesamiento):
             "tiempo_procesamiento": tiempo_procesamiento
         }
         supabase.table("detecciones").insert(data).execute()
-        print("Se guardo la deteccions")
+        # print("Se guardo la deteccions")
     except Exception as e:
         print(f"Error al guardar en Supabase: {e}")
 
@@ -102,3 +102,39 @@ def guardar_imagen_hongo(frame,nombre_archivo):
     with open(ruta_local, "rb") as f:
         supabase.storage.from_("detecciones").upload(f"detecciones/{nombre_archivo}", f, {"content-type": "image/jpeg"})
     return f"{SUPABASE_URL}/storage/v1/object/public/detecciones/detecciones/{nombre_archivo}"
+
+# ----- Listar el top 5 de las detecciones
+def obtener_deteccion():
+    try:
+        errores = supabase.table("errores_clasificacion").select("deteccion_id").execute()
+        ids_con_error = [e["deteccion_id"] for e in errores.data]
+
+        # 2. Obtener las �ltimas 10 detecciones que NO est�n en la lista de errores
+        if ids_con_error:
+            resp = supabase.table("detecciones").select("*")\
+                .not_.in_("id", ids_con_error)\
+                .order("fecha", desc=True)\
+                .limit(10).execute()
+        else:
+            # Si no hay errores registrados, traer los �ltimos 10 sin filtrar
+            resp = supabase.table("detecciones").select("*")\
+                .order("fecha", desc=True)\
+                .limit(10).execute()
+        #response = supabase.table('detecciones').select("*").order('fecha', desc=True).limit(5).execute()
+        return resp.data if resp.data else []
+    except Exception as e:
+        print("Error en listar las detecciones: {e}")
+        return [] 
+    
+# ----- Clasificacion de Errores -----
+def registrar_error(deteccion_id, tipo_error, comentario):
+    try:
+        supabase.table('errores_clasificacion').insert({
+            "deteccion_id": deteccion_id,
+            "tipo_error": tipo_error,
+            "comentario": comentario
+        }).execute()
+        # print("Se guardo la deteccions")
+    except Exception as e:
+        print(f"Error al guardar en Supabase: {e}")
+    
