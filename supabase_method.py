@@ -119,6 +119,10 @@ def detecciones_url_sellst():
 
 def detecciones_ins(estado, confianza, imagen_url, tiempo_procesamiento):
     try:
+        existing = supabase.table("detecciones").select("id").eq("imagen_url", imagen_url).execute()
+        if existing:
+            return
+
         if confianza <= 1.0:
             confianza = round(confianza * 100, 2)
         else:
