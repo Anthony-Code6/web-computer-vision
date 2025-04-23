@@ -1,37 +1,65 @@
 {% extends "base.html" %}
+
 {% block title %}Importar Modelo{% endblock %}
 
+{% block extra_styles %}
+<style>
+    .content {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 1rem;
+    }
+
+    .formulario {
+        text-align: center;
+        width: max-content;
+        padding: 10px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
+
+    h2 {
+        font-size: clamp(1.4rem, 3vh, 2.1vh);
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<h2>Importar Modelo .tflite a Supabase</h2>
-<form method="POST" action="/importar" enctype="multipart/form-data">
-    <input type="file" name="modelo" accept=".tflite" required>
-    <br><br>
-    <button type="submit"  class="btn btn-secondary">Subir Modelo</button>
-</form>
+<div class="content">
+    <div class="formulario">
+        <h2>Importar Modelo .tflite a Supabase</h2>
+        <form method="POST" action="/importar" enctype="multipart/form-data">
+            <input type="file" name="modelo" accept=".tflite" required>
+            <br><br>
+            <button type="submit" class="btn btn-secondary">Subir Modelo</button>
+        </form>
+    </div>
+</div>
 
 <div class="mt-3">
     <div class="table-responsive">
         <h3>Historial de Modelos Subidos</h3>
-<table class="table table-bordered" >
-    <thead>
-        <tr>
-            <th>#</th>
-            <th>Nombre</th>
-            <th>MB</th>
-            <th>Fecha</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for item in historial %}
-        <tr>
-            <td>{{ item.id }}</td>
-            <td>{{ item.name }}</td>
-            <td>{{ item.mb }}</td>
-            <td>{{ item.created_at | datetimeformat }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Nombre</th>
+                    <th>MB</th>
+                    <th>Fecha</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in historial %}
+                <tr>
+                    <td>{{ item.id }}</td>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.mb }}</td>
+                    <td>{{ item.created_at | datetimeformat }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
 
