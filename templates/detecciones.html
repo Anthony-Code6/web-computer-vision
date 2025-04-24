@@ -18,7 +18,7 @@
         gap: 5px
     }
 
-    .card{
+    .card {
         border: none;
         border-radius: 10px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
@@ -28,27 +28,25 @@
 
 
 {% block content %}
-<div class="container">
-    <div class="row g-1 mt-3 mb-3 d-flex justify-content-center">
-        <div class="col">
-            <select id="filtro-estado" class="form-select shadow-none">
-                <option value="">Todos</option>
-                <option value="hongo">Hongo</option>
-                <option value="sano">Sano</option>
-            </select>
-        </div>
-        <div class="col">
-            <input type="date" id="filtro-fecha" class="form-control shadow-none">
-        </div>
-
-        <div class="col-auto">
-            <button onclick="filtrarDetecciones()" class="btn btn-primary">Filtrar</button>
-        </div>
+<div class="row g-1 mt-3 mb-3 d-flex justify-content-center">
+    <div class="col">
+        <select id="filtro-estado" class="form-select shadow-none">
+            <option value="">Todos</option>
+            <option value="hongo">Hongo</option>
+            <option value="sano">Sano</option>
+        </select>
+    </div>
+    <div class="col">
+        <input type="date" id="filtro-fecha" class="form-control shadow-none">
     </div>
 
-
-    <div class="row g-3 justify-content-center mt-3 mb-3" id="row-data"></div>
+    <div class="col-auto">
+        <button onclick="filtrarDetecciones()" class="btn btn-primary">Filtrar</button>
+    </div>
 </div>
+
+
+<div class="row g-3 justify-content-center mt-3 mb-3" id="row-data"></div>
 {% endblock %}
 
 {% block scripts %}

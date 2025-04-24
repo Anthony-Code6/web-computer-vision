@@ -18,7 +18,6 @@ document.addEventListener('DOMContentLoaded', cargarDetecciones);
 
 const renderizarDetecciones = (data) => {
     let information = ''
-    console.log(data)
     if (data.length === 0) {
         information += `
          <div class="text-center">

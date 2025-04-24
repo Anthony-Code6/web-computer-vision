@@ -5,7 +5,7 @@ from PIL import Image
 import base64
 from detector import generar_frames
 from detector_service import detectar_en_imagen
-from supabase_method import upload_model,historial_ins,historial_sellst,detecciones_error_sellst,clasificacion_ins,deteccion_dlt,delete_imagen,detecciones_url_sellst,file_sellst
+from supabase_method import upload_model,historial_ins,historial_sellst,detecciones_error_sellst,clasificacion_ins,deteccion_dlt,delete_imagen,detecciones_url_sellst,file_sellst,reporte_fecha_chartjs
 from datetime import datetime
 import os
 
@@ -100,6 +100,17 @@ def eliminar_deteccion():
     except Exception as e:
         return jsonify({"success": False, "message": str(e)}), 500
 
+# ----- Repostes -----
+@app.route('/reportes')
+def reportes():
+    return render_template('reportes.html')
+
+@app.route("/api/reporte-fecha/<fecha_str>", methods=["GET"])
+def generar_reporte(fecha_str):
+    data = reporte_fecha_chartjs(fecha_str)
+    if data:
+        return jsonify(data)
+    return jsonify({"error": "No se pudo generar el reporte"})
 
 # ----- Captura y retorna de informacion detallada -----
 @app.route('/capturar')

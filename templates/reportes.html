@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Generar Reportes{% endblock %}
+
+{% block extra_styles %}
+<style>
+    p {
+        margin-bottom: 4px;
+    }
+
+    .filtro{
+        margin-top: 13px;
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+    }
+    .filtro #reporte-fecha{
+        width: min-content;
+    }
+
+    #informe {
+        display: flex;
+        margin-top: 10px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        padding: 11px;
+    }
+
+    #informe #detalles{
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: row;
+        justify-content: center;
+        gap: 5px;
+    }
+
+    h5 {
+        display: block;
+        text-align: center;
+    }
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="filtro">
+    <input type="date" class="form-control form-control-sm shadow-none" id="reporte-fecha" required />
+    <button onclick="GenerarReporte()" class="btn btn-primary">Generar Reporte</button>
+    <button id="exportar-pdf" class="btn btn-danger">PDF</button>
+</div>
+<div id="informe">
+    <h5>Reporte Generado</h5>
+    <div id="detalles"></div>
+    <canvas id="grafico-errores" width="400" height="200"></canvas>   
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='reportes.js') }}"></script>
+{% endblock %}
