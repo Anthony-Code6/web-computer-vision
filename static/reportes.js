@@ -55,7 +55,6 @@ const GenerarReporte = async () => {
         // Detalles
         detalles.innerHTML = `
             <p><strong>Fecha:</strong> ${data.fecha}</p>
-            <p><strong>Fecha:</strong> ${data.fecha}</p>
             <p><strong>Total Detecciones:</strong> ${data.total_detecciones}</p>
             <p><strong>Total Errores:</strong> ${data.total_errores}</p>
         `
