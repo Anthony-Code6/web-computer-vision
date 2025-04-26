@@ -65,6 +65,8 @@ const GenerarReporte = async () => {
 
         mostrarGrafico(data, labels, values);
     } else {
+         exportar_pdf.style.display='none'
+        view_informe.style.display = 'none'
         swal("Error !", "No existe detecciones en esa fecha.", "error");
     }
 }
