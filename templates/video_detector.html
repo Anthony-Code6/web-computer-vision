@@ -30,7 +30,7 @@
 </div>
 
 <script>
-    const videoFeed = document.getElementById('videoFeed');
+    /*const videoFeed = document.getElementById('videoFeed');
 
     function startCamera() {
         videoFeed.src = '/video';
@@ -40,6 +40,35 @@
     function stopCamera() {
         videoFeed.src = '';
         videoFeed.style.display = 'none';
+    }*/
+
+    const videoFeed = document.getElementById('videoFeed');
+
+    function startCamera() {
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(stream => {
+                    videoFeed.srcObject = stream;
+                    videoFeed.style.display = 'block';
+                })
+                .catch(err => {
+                    console.error("Error accessing camera: ", err);
+                });
+        } else {
+            console.error("Camera access is not supported by this browser.");
+        }
     }
+
+    function stopCamera() {
+        const stream = videoFeed.srcObject;
+        if (stream) {
+            const tracks = stream.getTracks();
+            tracks.forEach(track => track.stop());
+            videoFeed.srcObject = null;
+        }
+        videoFeed.style.display = 'none';
+    }
+
+
 </script>
 {% endblock %}

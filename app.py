@@ -1,4 +1,4 @@
-from flask import Flask, render_template,redirect,request, Response,jsonify
+from flask import Flask, render_template,redirect,request, Response,jsonify,session,url_for
 from flask_apscheduler import APScheduler
 from io import BytesIO
 from PIL import Image
@@ -8,9 +8,10 @@ from detector_service import detectar_en_imagen
 from supabase_method import upload_model,historial_ins,historial_sellst,detecciones_error_sellst,clasificacion_ins,deteccion_dlt,delete_imagen,detecciones_url_sellst,file_sellst,reporte_fecha_chartjs
 from datetime import datetime
 import os
+from functools import wraps
 
 app = Flask(__name__)
-
+app.secret_key = "t#!$_!$_the_w@y" 
 
 class Config:
     SCHEDULER_API_ENABLED = True
@@ -20,13 +21,46 @@ scheduler = APScheduler()
 scheduler.init_app(app)
 scheduler.start()
 
+# -- Autenticacion
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'usuario' not in session:
+            return redirect(url_for('login'))  # O cambia al nombre de tu ruta login
+        return f(*args, **kwargs)
+    return decorated_function
+
+
+@app.route('/', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+
+        if email == "test@gmail.com" and password == "123123":
+            session['usuario'] = email
+            return redirect(url_for('index'))  # O redirige a donde quieras
+        else:
+            return render_template('login.html', error="Credenciales invalidas")
+
+    return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    session.pop('usuario', None)
+    return redirect(url_for('login'))
+
+
 # ----- Index -----
-@app.route('/')
+@app.route('/home')
+@login_required
 def index():
     return render_template('index.html')
 
 # ----- Deteccion de Tiempo Real -----
 @app.route('/detectar')
+@login_required
 def detectar():
     return render_template("video_detector.html")
 
@@ -37,6 +71,7 @@ def video():
 # ----- Importacion -----
 
 @app.route('/importar', methods=['GET', 'POST'])
+@login_required
 def importar():
     if request.method == 'POST':
         archivo = request.files['modelo']
