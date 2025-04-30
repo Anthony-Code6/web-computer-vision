@@ -4,7 +4,7 @@ const contenedor = document.getElementById('row-data')
 const cargarDetecciones = async () => {
     const response = await fetch('/api/list-detections', { method: 'GET' })
     const datos = await response.json()
-
+  
     listaDetecciones = []
     datos._deteccion.forEach(element => {
         listaDetecciones.push(element)

@@ -3,7 +3,7 @@ from supabase import create_client
 import cv2
 from datetime import datetime
 
-# Configuraci�n de Supabase (puedes mover esto a variables de entorno si lo deseas)
+# Configuracion de Supabase (puedes mover esto a variables de entorno si lo deseas)
 SUPABASE_URL = "https://bhnktceuzfjvgbpkoumz.supabase.co"
 SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJobmt0Y2V1emZqdmdicGtvdW16Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2NzUxMTksImV4cCI6MjA2MDI1MTExOX0.6BBAuD_FaU74dWZl0p8kV-d90KE5bIOO6Hq7HztRTd0"
 BUCKET_NAME = "model"
@@ -40,7 +40,7 @@ def upload_model(ruta_archivo_local: str, nombre_remoto: str = "best.tflite"):
         # print("Archivo subido correctamente a Supabase.")
     
     except Exception as e:
-        # print(f"Error al subir archivo a Supabase: {e}")
+        print(f"Error al subir archivo a Supabase: {e}")
         raise
 
 def upload_imagen(frame,nombre_archivo):
@@ -114,14 +114,14 @@ def detecciones_url_sellst():
         nombres_en_tabla = set(os.path.basename(url) for url in urls_registradas)
         return nombres_en_tabla
     except Exception as e:
-        print('Error al listar las imagen detecciones: {e}')
+        print(f'Error al listar las imagen detecciones: {e}')
         return []
 
 def detecciones_ins(estado, confianza, imagen_url, tiempo_procesamiento):
     try:
-        existing = supabase.table("detecciones").select("id").eq("imagen_url", imagen_url).execute()
-        if existing:
-            return
+       # existing = supabase.table("detecciones").select("id").eq("imagen_url", imagen_url).execute()
+       # if existing:
+       #     return
 
         if confianza <= 1.0:
             confianza = round(confianza * 100, 2)
@@ -139,16 +139,18 @@ def detecciones_ins(estado, confianza, imagen_url, tiempo_procesamiento):
             "confianza": confianza,
             "tiempo_procesamiento": tiempo_procesamiento
         }
+        print('Datos de la clasificacion')
+        print(data)
         supabase.table("detecciones").insert(data).execute()
         # print("Se guardo la deteccions")
     except Exception as e:
-        print(f"Error al guardar en Supabase: {e}")
+        print(f"Error al guardar en detecciones Supabase: {e}")
 
 def deteccion_dlt(id):
     try:
         supabase.table("detecciones").delete().eq("id", id).execute()
     except Exception as e:
-        print('Error al eliminar {e}')
+        print(f'Error al eliminar una clasificacion: {e}')
 
 
 # ----- Listar el top 10 de las detecciones
@@ -169,7 +171,7 @@ def detecciones_error_sellst():
         #response = supabase.table('detecciones').select("*").order('fecha', desc=True).limit(5).execute()
         return resp.data if resp.data else []
     except Exception as e:
-        print("Error en listar las detecciones: {e}")
+        print(f"Error en listar las detecciones: {e}")
         return [] 
     
 # ----- Clasificacion de Errores -----
@@ -182,7 +184,7 @@ def clasificacion_ins(deteccion_id, tipo_error, comentario):
         }).execute()
         # print("Se guardo la deteccions")
     except Exception as e:
-        print(f"Error al guardar en Supabase: {e}")
+        print(f"Error al guardar clasificacion en Supabase: {e}")
     
 # ----- Reportes -----
 def reporte_fecha_chartjs(fecha_str):
@@ -217,5 +219,5 @@ def reporte_fecha_chartjs(fecha_str):
             "errores": errores
         }
     except Exception as e:
-        print('Error {e}')
+        print(f'Error generar reporte {e}')
         return

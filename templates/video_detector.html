@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Deteccion de Hongos{% endblock %}
+{% block title %}Detección de Hongos{% endblock %}
 
 {% block extra_styles %}
 <style>
@@ -9,66 +9,112 @@
         justify-content: center;
     }
 
-    img {
+    video {
         max-width: 100%;
         height: auto;
         border-radius: 10px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
         margin-top: 1rem;
+        border: 3px solid transparent;
+        transition: border 0.3s ease-in-out;
+    }
+
+    .video-active {
+        border-color: #28a745;
+    }
+
+    #detectionsContainer {
+        margin-top: 1rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+    }
+
+    .detection-img {
+        max-width: 250px;
+        border: 2px solid #ccc;
+        border-radius: 8px;
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<h2>Deteccion en Tiempo Real - Fruto del Tangelo</h2>
+<h2>Detección en Tiempo Real - Fruto del Tangelo</h2>
 
 <button onclick="startCamera()" class="btn btn-primary">Iniciar</button>
 <button onclick="stopCamera()" class="btn btn-danger">Detener</button>
 
 <div id="videoContainer" class="mt-2">
-    <img id="videoFeed" src="">
+    <video id="videoFeed" autoplay playsinline style="display: none;"></video>
 </div>
 
+<div id="detectionsContainer"></div>
+
 <script>
-    /*const videoFeed = document.getElementById('videoFeed');
-
-    function startCamera() {
-        videoFeed.src = '/video';
-        videoFeed.style.display = 'block';
-    }
-
-    function stopCamera() {
-        videoFeed.src = '';
-        videoFeed.style.display = 'none';
-    }*/
-
     const videoFeed = document.getElementById('videoFeed');
+    const detectionsContainer = document.getElementById('detectionsContainer');
+    let currentStream = null;
+    let intervalId = null;
 
-    function startCamera() {
+    async function startCamera() {
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
             navigator.mediaDevices.getUserMedia({ video: true })
                 .then(stream => {
+                    currentStream = stream;
                     videoFeed.srcObject = stream;
                     videoFeed.style.display = 'block';
+                    videoFeed.classList.add('video-active');
+
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+
+                    intervalId = setInterval(async () => {
+                        if (!videoFeed.videoWidth) return;
+
+                        canvas.width = videoFeed.videoWidth;
+                        canvas.height = videoFeed.videoHeight;
+                        ctx.drawImage(videoFeed, 0, 0, canvas.width, canvas.height);
+                        const imageData = canvas.toDataURL('image/jpeg');
+
+                        try {
+                            const response = await fetch('/analizar_frame', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ image: imageData })
+                            });
+
+                            const data = await response.json();
+
+                            if (data.image) {
+                                const img = document.createElement('img');
+                                img.src = data.image;
+                                img.alt = "Resultado de detección";
+                                img.classList.add('detection-img');
+                                detectionsContainer.prepend(img); // Mostrar la detección más reciente primero
+                            }
+                        } catch (err) {
+                            console.error("Error procesando el frame:", err);
+                        }
+                    }, 2000);
                 })
                 .catch(err => {
-                    console.error("Error accessing camera: ", err);
+                    console.error("Error al acceder a la cámara: ", err);
                 });
         } else {
-            console.error("Camera access is not supported by this browser.");
+            console.error("El navegador no soporta acceso a la cámara.");
         }
     }
 
     function stopCamera() {
-        const stream = videoFeed.srcObject;
-        if (stream) {
-            const tracks = stream.getTracks();
-            tracks.forEach(track => track.stop());
-            videoFeed.srcObject = null;
+        if (currentStream) {
+            currentStream.getTracks().forEach(track => track.stop());
+            currentStream = null;
         }
+        clearInterval(intervalId);
+        videoFeed.srcObject = null;
         videoFeed.style.display = 'none';
+        videoFeed.classList.remove('video-active');
     }
-
-
 </script>
 {% endblock %}

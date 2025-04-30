@@ -4,7 +4,7 @@ from io import BytesIO
 from PIL import Image
 import base64
 from detector import generar_frames
-from detector_service import detectar_en_imagen
+from detector_service import analizar_imagen_base64
 from supabase_method import upload_model,historial_ins,historial_sellst,detecciones_error_sellst,clasificacion_ins,deteccion_dlt,delete_imagen,detecciones_url_sellst,file_sellst,reporte_fecha_chartjs
 from datetime import datetime
 import os
@@ -67,6 +67,17 @@ def detectar():
 @app.route('/video')
 def video():
     return Response(generar_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+
+@app.route('/analizar_frame', methods=['POST'])
+def analizar_frame():
+    try:
+        data = request.get_json()
+        image_data = data['image']
+        resultado = analizar_imagen_base64(image_data)
+        return jsonify({ 'image': resultado })
+    except Exception as e:
+        return jsonify({ 'error': str(e) }), 500
 
 # ----- Importacion -----
 
@@ -147,42 +158,8 @@ def generar_reporte(fecha_str):
         return jsonify(data)
     return jsonify({"error": "No se pudo generar el reporte"})
 
-# ----- Captura y retorna de informacion detallada -----
-@app.route('/capturar')
-def capturar_imagen():
-    return render_template("capturar.html")
-
-@app.route('/captura', methods=['POST'])
-def capturar_y_detectar():
-    try:
-        # Recibir imagen en base64 o como archivo
-        if 'image' in request.files:
-            file = request.files['image']
-            image = Image.open(file.stream).convert("RGB")
-        else:
-            data = request.get_json()
-            img_data = base64.b64decode(data['image'].split(',')[1])
-            image = Image.open(BytesIO(img_data)).convert("RGB")
-
-        # Procesar imagen
-        imagen_procesada, tasa_error = detectar_en_imagen(image)
-
-        # Convertir a base64 para retorno
-        buffered = BytesIO()
-        imagen_procesada.save(buffered, format="JPEG")
-        img_base64 = base64.b64encode(buffered.getvalue()).decode()
-
-        return jsonify({
-            'image': f"data:image/jpeg;base64,{img_base64}",
-            'tasa_error': tasa_error
-        })
-
-    except Exception as e:
-        print("Error en /capturar:", e)
-        return jsonify({'error': str(e)}), 500
-
 # ----- Tarea en Segundo Plano cada 60 min -----
-@scheduler.task('interval', id='limpiar_archivos', minutes=60)
+@scheduler.task('interval', id='limpiar_archivos', minutes=3)
 def limpiar_imagenes_no_usadas():
     try:
         print('Ejecutando limpieza de archivo no usadas.')
@@ -200,5 +177,6 @@ def limpiar_imagenes_no_usadas():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run()
+    #app.run(port=8000, debug=True)
 

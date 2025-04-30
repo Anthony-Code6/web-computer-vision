@@ -60,3 +60,35 @@ def generar_frames2():
         frame = buffer.tobytes()
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+
+
+
+const videoFeed = document.getElementById('videoFeed');
+    let currentStream = null;
+
+    function startCamera() {
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(stream => {
+                    currentStream = stream;
+                    videoFeed.srcObject = stream;
+                    videoFeed.style.display = 'block';
+                    videoFeed.classList.add('video-active');
+                })
+                .catch(err => {
+                    console.error("Error al acceder a la cámara: ", err);
+                });
+        } else {
+            console.error("El navegador no soporta acceso a la cámara.");
+        }
+    }
+
+    function stopCamera() {
+        if (currentStream) {
+            currentStream.getTracks().forEach(track => track.stop());
+            videoFeed.srcObject = null;
+            currentStream = null;
+        }
+        videoFeed.style.display = 'none';
+        videoFeed.classList.remove('video-active');
+    }

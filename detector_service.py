@@ -1,64 +1,84 @@
-import base64
-from io import BytesIO
-from PIL import Image, ImageDraw
 import numpy as np
 import cv2
+import threading
+import time
+from PIL import Image
+from io import BytesIO
+import base64
 import mediapipe as mp
 from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
-from supabase_method import download_model
+from supabase_method import download_model, upload_imagen, detecciones_ins
 
-# Cargar el modelo desde Supabase
-local_model_path = download_model()
-base_options = python.BaseOptions(model_asset_path=local_model_path)
+# Constantes visuales
+MARGIN = -1
+ROW_SIZE = 10
+FONT_SIZE = 2
+FONT_THICKNESS = 1
+rect_color_GREEN = (66, 255, 0)
+rect_color_RED = (227, 7, 34)
+TEXT_COLOR = (255, 255, 255)
+
+# Modelo MediaPipe
+model_path = download_model()
+base_options = python.BaseOptions(model_asset_path=model_path)
 options = vision.ObjectDetectorOptions(base_options=base_options, score_threshold=0.5)
 detector = vision.ObjectDetector.create_from_options(options)
 
-def calcular_tasa_error(detecciones):
-    total = len(detecciones)
-    if total == 0:
-        return 0.0
-    errores = sum(1 for d in detecciones if d.categories[0].category_name != "SIN_HONGO")
-    return round((errores / total) * 100, 2)
+def save_task(frame, estado, confianza, tiempo_procesamiento):
+    import uuid
+    estado_bool = True if estado.upper() == "HONGO" else False
+    nombre_imagen = f"{uuid.uuid4()}.jpg"
+    url = upload_imagen(frame, nombre_imagen)
+    print('URL DE LA IMAGEN SUBIDA A SUPABASE')
+    print(url)
+    
+    detecciones_ins(estado_bool, confianza, url, tiempo_procesamiento)
 
-def detectar_en_imagen(image: Image.Image):
-    """
-    Detecta tangelos y clasifica si tienen hongo o no.
-    Devuelve imagen anotada y tasa de error.
-    """
-    np_image = np.array(image.convert("RGB"))
-    mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=np_image)
-    result = detector.detect(mp_image)
-    tasa_error = calcular_tasa_error(result.detections)
+def analizar_imagen_base64(image_base64):
+    image_data = image_base64.split(',')[1]
+    image_bytes = base64.b64decode(image_data)
+    image = Image.open(BytesIO(image_bytes)).convert("RGB")
+    frame = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
+    frame = cv2.flip(frame, 1)
 
-    draw = ImageDraw.Draw(image)
+    start_time = time.time()
+    mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=frame)
+    detection_result = detector.detect(mp_image)
 
-    for detection in result.detections:
+    for detection in detection_result.detections:
         bbox = detection.bounding_box
-        label = detection.categories[0].category_name
-        score = detection.categories[0].score
-        color = "green" if label == "SIN_HONGO" else "red"
+        x, y, w, h = int(bbox.origin_x), int(bbox.origin_y), int(bbox.width), int(bbox.height)
+        category = detection.categories[0]
+        category_name = category.category_name
+        probability = round(category.score, 2)
 
-        x, y, w, h = bbox.origin_x, bbox.origin_y, bbox.width, bbox.height
-        draw.rectangle([(x, y), (x + w, y + h)], outline=color, width=3)
-        draw.text((x, y - 10), f"{label} ({score:.2f})", fill=color)
+        status_category_name = category_name if probability > 0.7 else 'SIN_HONGO'
+        result_text = f"{category_name} ({probability})"
 
-        # Si tiene hongo, estimar porcentaje de �rea afectada por color
-        if label == "HONGO":
-            # Convertir imagen a formato OpenCV para procesar color
-            cv2_image = cv2.cvtColor(np_image, cv2.COLOR_RGB2BGR)
-            roi = cv2_image[int(y):int(y+h), int(x):int(x+w)]
+        color = rect_color_GREEN if status_category_name == 'SIN_HONGO' else rect_color_RED
+        cv2.rectangle(frame, (x, y), (x + w, y + h), color, 3)
+        cv2.putText(frame, result_text, (x, y - 10), cv2.FONT_HERSHEY_PLAIN, FONT_SIZE, TEXT_COLOR, FONT_THICKNESS)
 
-            if roi.size > 0:
-                hsv_roi = cv2.cvtColor(roi, cv2.COLOR_BGR2HSV)
-                lower_hongo = np.array([0, 50, 20])
-                upper_hongo = np.array([20, 255, 150])
-                mask = cv2.inRange(hsv_roi, lower_hongo, upper_hongo)
+        if status_category_name == 'HONGO':
+            roi = frame[y:y + h, x:x + w]
+            hsv_roi = cv2.cvtColor(roi, cv2.COLOR_BGR2HSV)
+            lower_hongo = np.array([0, 50, 20])
+            upper_hongo = np.array([20, 255, 150])
+            mask = cv2.inRange(hsv_roi, lower_hongo, upper_hongo)
+            total_pixels = w * h
+            affected_pixels = cv2.countNonZero(mask)
+            porcentaje_afectado = (affected_pixels / total_pixels) * 100
+            porcentaje_text = f"{porcentaje_afectado:.1f}% hongo"
+            cv2.putText(frame, porcentaje_text, (x, y + h + 25), cv2.FONT_HERSHEY_PLAIN, FONT_SIZE, TEXT_COLOR, FONT_THICKNESS)
+            mask_colored = cv2.merge([mask, mask, mask])
+            masked_region = cv2.addWeighted(roi, 1, mask_colored, 0.5, 0)
+            frame[y:y + h, x:x + w] = masked_region
 
-                total_pixels = w * h
-                affected_pixels = cv2.countNonZero(mask)
-                porcentaje_afectado = (affected_pixels / total_pixels) * 100
+        tiempo_procesamiento = round(time.time() - start_time, 2)
+        threading.Thread(target=save_task, args=(frame.copy(), status_category_name, probability, tiempo_procesamiento)).start()
 
-                draw.text((x, y + h + 10), f"{porcentaje_afectado:.1f}% hongo", fill=color)
-
-    return image, tasa_error
+    _, buffer = cv2.imencode('.jpg', frame)
+    img_bytes = buffer.tobytes()
+    img_base64 = base64.b64encode(img_bytes).decode('utf-8')
+    return f"data:image/jpeg;base64,{img_base64}"
