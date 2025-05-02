@@ -4,8 +4,8 @@ import cv2
 from datetime import datetime
 
 # Configuracion de Supabase (puedes mover esto a variables de entorno si lo deseas)
-SUPABASE_URL = "https://bhnktceuzfjvgbpkoumz.supabase.co"
-SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJobmt0Y2V1emZqdmdicGtvdW16Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2NzUxMTksImV4cCI6MjA2MDI1MTExOX0.6BBAuD_FaU74dWZl0p8kV-d90KE5bIOO6Hq7HztRTd0"
+SUPABASE_URL = "https://ptmhxjbqghsylnxexchk.supabase.co"
+SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB0bWh4amJxZ2hzeWxueGV4Y2hrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDYxNDI4MTcsImV4cCI6MjA2MTcxODgxN30.rOwrsSqcEmqGvf95SUTSRoP5FlJ7heGboF2CChuqkyI"
 BUCKET_NAME = "model"
 BUCKET_NAME_HONGO = "detecciones"
 
