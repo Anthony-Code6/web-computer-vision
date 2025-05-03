@@ -7,3 +7,4 @@ mediapipe==0.10.15
 supabase==2.15.0
 Werkzeug==2.2.2
 gunicorn==23.0.0
+numpy==1.24.2
