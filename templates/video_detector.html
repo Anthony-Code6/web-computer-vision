@@ -3,6 +3,11 @@
 
 {% block extra_styles %}
 <style>
+    .content-title {
+        text-align: center;
+    }
+
+
     #videoContainer {
         max-width: 100%;
         display: flex;
@@ -10,6 +15,7 @@
     }
 
     video {
+        width: 100%;
         max-width: 100%;
         height: auto;
         border-radius: 10px;
@@ -40,16 +46,37 @@
 {% endblock %}
 
 {% block content %}
-<h2>Detección en Tiempo Real - Fruto del Tangelo</h2>
+<div class="content-title mt-4">
+    <h2>Detección en Tiempo Real - Fruto del Tangelo</h2>
+    <button onclick="startCamera()" class="btn btn-primary">Iniciar</button>
+    <button onclick="stopCamera()" class="btn btn-danger">Detener</button>
+</div>
 
-<button onclick="startCamera()" class="btn btn-primary">Iniciar</button>
-<button onclick="stopCamera()" class="btn btn-danger">Detener</button>
+
+<div class="container mt-2 mb-2 d-flex justify-content-center">
+    <div class="alert alert-light w-auto p-2 border border-dark-subtle" role="alert">
+        <h4 class="alert-heading">Surgerencias</h4>
+        <ol>
+            <li>Posiciona la cámara de forma que los tangelos pasen claramente por el área de captura.</li>
+            <li>Para comenzar con la detección, presiona el botón "Iniciar".</li>
+            <li>La detección se realiza automáticamente:
+                <ul>
+                    <li>Solo se guardarán imágenes donde se detecte un tangelo afectado o sano.</li>
+                    <li>Las imágenes sin detección serán descartadas.</li>
+                </ul>
+            </li>
+            <li>Para detener la detección, presiona el botón "Detener".</li>
+        </ol>
+    </div>
+</div>
 
 <div id="videoContainer" class="mt-2">
+    <!-- <video id="videoFeed" class="video-active" autoplay playsinline style="display: block;"></video> -->
     <video id="videoFeed" autoplay playsinline style="display: none;"></video>
 </div>
 
-<div id="detectionsContainer"></div>
+<div id="detectionsContainer">
+</div>
 
 <script>
     const videoFeed = document.getElementById('videoFeed');

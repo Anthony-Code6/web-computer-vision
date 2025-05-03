@@ -58,6 +58,12 @@ def download_model(nombre_remoto: str = "best.tflite", ruta_local: str = "/tmp/b
     :param ruta_local: Ruta local donde guardar el archivo (por defecto: /tmp/best.tflite)
     """
     try:
+        if ruta_local is None:
+            ruta_local = os.path.join(tempfile.gettempdir(), nombre_remoto)
+
+        # Asegura que el directorio exista
+        os.makedirs(os.path.dirname(ruta_local), exist_ok=True)
+
         res = supabase.storage.from_(BUCKET_NAME).download(nombre_remoto)
         with open(ruta_local, "wb") as f:
             f.write(res)

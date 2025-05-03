@@ -7,14 +7,14 @@
     .content {
         display: flex;
         justify-content: center;
-        gap: 10px;
+        gap: 14px;
         margin-top: 1rem;
     }
 
     .formulario {
         text-align: center;
         width: max-content;
-        padding: 10px;
+        padding: 14px 19px;
         border-radius: 10px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     }
@@ -37,6 +37,7 @@
     </div>
 </div>
 
+{% if historial|length > 0 %}
 <div class="mt-3">
     <div class="table-responsive">
         <h3>Historial de Modelos Subidos</h3>
@@ -62,5 +63,7 @@
         </table>
     </div>
 </div>
+{% endif %}
+
 
 {% endblock %}

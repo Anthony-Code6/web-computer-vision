@@ -57,7 +57,7 @@ const renderizarDetecciones = (data) => {
                                 <textarea name="comentario" class="form-control shadow-none"
                                     placeholder="Comentario opcional..." required></textarea>
                                 <div class="button d-flex justify-content-between mt-2">
-                                    <button type="submit" class="btn btn-primary">Registrar Error</button>
+                                    <button type="submit" class="btn btn-primary">Guardar</button>
                                     <button type="button" class="btn btn-danger" onclick="eliminarDeteccion(this.form)">Eliminar</button>
                                 </div>
                             </form>
