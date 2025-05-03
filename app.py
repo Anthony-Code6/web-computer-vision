@@ -21,13 +21,14 @@ scheduler = APScheduler()
 scheduler.init_app(app)
 scheduler.start()
 
-# -- Autenticacion
+# -- Autenticacion --
 
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if 'usuario' not in session:
-            return redirect(url_for('login'))  # O cambia al nombre de tu ruta login
+            # O cambia al nombre de tu ruta login
+            return redirect(url_for('login'))  
         return f(*args, **kwargs)
     return decorated_function
 
