@@ -14,7 +14,7 @@ cycler==0.12.1
 deprecation==2.1.0
 Flask==2.2.2
 Flask-APScheduler==1.12.4
-flatbuffers==20181003210633
+flatbuffers==25.2.10
 fonttools==4.57.0
 frozenlist==1.6.0
 gotrue==2.12.0
