@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Clasificaciones{% endblock %}
+
+{% block extra_styles %}
+<style>
+    .btn-sm.dropdown-toggle{
+        background: white; 
+        color:black;
+    }
+    .dropdown-item{
+        text-align: center;
+    }
+    .dropdown-item:hover {
+        color: black;
+        background: white;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<table class="table table-bordered mt-3">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Tipo</th>
+            <th>Comentario</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody id="tabla_clasificacion">
+
+    </tbody>
+</table>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='clasificacion.js') }}"></script>
+{% endblock %}

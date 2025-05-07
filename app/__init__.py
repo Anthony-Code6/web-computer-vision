@@ -4,6 +4,7 @@ from .config import Config
 from .routes.auth_routes import auth_bp
 from .routes.main_routes import main_bp
 from .routes.detection_routes import detection_bp
+from .routes.clasificaciones_routes import clasificacion_bp
 
 scheduler = APScheduler()
 
@@ -19,6 +20,7 @@ def create_app():
     app.register_blueprint(auth_bp)
     app.register_blueprint(main_bp)
     app.register_blueprint(detection_bp)
+    app.register_blueprint(clasificacion_bp)
 
     # Filtros globales (como datetimeformat)
     from .utils.helpers import datetimeformat

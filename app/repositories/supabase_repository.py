@@ -156,7 +156,7 @@ def deteccion_dlt(id):
     try:
         supabase.table("detecciones").delete().eq("id", id).execute()
     except Exception as e:
-        print(f'Error al eliminar una clasificacion: {e}')
+        print(f'Error al eliminar una deteccion: {e}')
 
 
 # ----- Listar el top 10 de las detecciones
@@ -227,3 +227,20 @@ def reporte_fecha_chartjs(fecha_str):
     except Exception as e:
         print(f'Error generar reporte {e}')
         return
+
+
+# ---- Clasificacion de Errores ----
+def clasificacion_error_sellst():
+    try:
+        response = supabase.table("errores_clasificacion").select("*").execute()
+        return response.data if response.data else []
+    except Exception as e:
+        print(f"Error en listar de claficacion de errores: {e}")
+        return [] 
+    
+def clasficicacion_dlt(id):
+    try:
+        supabase.table("errores_clasificacion").delete().eq("id", id).execute()
+    except Exception as e:
+        print(f'Error al eliminar la clasificacion: {e}')
+    
