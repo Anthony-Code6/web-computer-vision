@@ -1,2 +1,5 @@
 venv/
 __pycache__/
+app/repositories/__pycache__/
+app/services/__pycache__/
+app/utils/__pycache__/
