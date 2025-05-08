@@ -3,6 +3,20 @@
 
 {% block extra_styles %}
 <style>
+    .btn-sm.dropdown-toggle {
+        background: white;
+        color: black;
+    }
+
+    .dropdown-item {
+        text-align: center;
+    }
+
+    .dropdown-item:hover {
+        color: black;
+        background: white;
+    }
+
     textarea {
         resize: none;
         field-sizing: content;
@@ -23,11 +37,88 @@
         border-radius: 10px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     }
+
+    .imagen_modal {
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+
+    #imagen_modal_read {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+    }
+
+    .estado_hongo,
+    .estado_sano {
+        border-radius: 10px;
+        padding: 3px 5px;
+        width: max-content;
+        color: white;
+    }
+
+    .estado_hongo {
+        background-color: hsl(0, 59%, 61%);
+    }
+
+    .estado_sano {
+        background-color: hsl(120, 100%, 35%);
+    }
 </style>
 {% endblock %}
 
 
 {% block content %}
+
+<!-- Modal Mostrar Imagen -->
+<div class="modal fade" id="model_imagen" tabindex="-1" aria-labelledby="model_imagenLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="model_imagenLabel">Imagen de la Detección</h1>
+                <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="imagen_modal">
+                    <img alt="Imagen Deteccion" id="imagen_modal_read">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Registrar Error</h1>
+                <button type="button" class="btn-close  shadow-none" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <form action="javascript:void(0)" method="POST" onsubmit="reportarError(this)">
+                <div class="modal-body">
+                    <input type="hidden" name="deteccion_id" id="deteccion_id">
+                    <label>Tipo de error:</label>
+                    <select name="tipo_error" class="form-select shadow-none" required>
+                        <option value="falso_positivo" selected>Falso Positivo</option>
+                        <option value="falso_negativo">Falso Negativo</option>
+                    </select>
+                    <label>Comentario:</label>
+                    <textarea name="comentario" id="comentario" class="form-control shadow-none" placeholder="Comentario opcional..."
+                        required></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Registrar Error</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <div class="row g-1 mt-3 mb-3 d-flex justify-content-center">
     <div class="col">
         <select id="filtro-estado" class="form-select shadow-none">
@@ -45,8 +136,43 @@
     </div>
 </div>
 
+<div class="table-responsive mt-3" id="tabla_sin_clasificado">
+    <table class="table table-bordered" style="width: 100%;">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Imagen</th>
+                <th>Tiempo Proc.</th>
+                <th>Confianza</th>
+                <th>Fecha</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="tabla_detecciones">
 
-<div class="row g-3 justify-content-center mt-3 mb-3" id="row-data"></div>
+        </tbody>
+    </table>
+</div>
+
+<div class="table-responsive mt-3" id="tabla_clasificado">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Imagen</th>
+                <th>Tiempo Proc.</th>
+                <th>Confianza</th>
+                <th>Fecha</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody id="tabla_detecciones_clasificado">
+
+        </tbody>
+    </table>
+</div>
+
 {% endblock %}
 
 {% block scripts %}

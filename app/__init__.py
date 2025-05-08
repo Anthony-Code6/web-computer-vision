@@ -1,12 +1,10 @@
 from flask import Flask
-from flask_apscheduler import APScheduler
 from .config import Config
 from .routes.auth_routes import auth_bp
 from .routes.main_routes import main_bp
 from .routes.detection_routes import detection_bp
 from .routes.clasificaciones_routes import clasificacion_bp
-
-scheduler = APScheduler()
+from .scheduler_tasks import scheduler
 
 def create_app():
     app = Flask(__name__,template_folder='../templates',static_folder='../static')
@@ -21,6 +19,7 @@ def create_app():
     app.register_blueprint(main_bp)
     app.register_blueprint(detection_bp)
     app.register_blueprint(clasificacion_bp)
+
 
     # Filtros globales (como datetimeformat)
     from .utils.helpers import datetimeformat

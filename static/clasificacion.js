@@ -18,8 +18,6 @@ const LoadClasificacion = async () => {
 document.addEventListener("DOMContentLoaded", LoadClasificacion);
 
 const renderizarClasificaciones = (data) => {
-  console.log(data.length);
-
   let information = "";
 
   if (data.length > 0) {
@@ -58,10 +56,6 @@ const renderizarClasificaciones = (data) => {
 };
 
 const eliminarClasificacion = async (index, id) => {
-  console.log(index, id);
-
-  console.log(listClasificacion.findIndex((item) => (item.id = id)));
-
   try {
     swal({
       title: "Eliminar Clasificación?",

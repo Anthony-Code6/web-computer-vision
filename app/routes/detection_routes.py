@@ -17,7 +17,8 @@ def analizar_frame():
 
 @detection_bp.route('/api/list-detections')
 def listDetections():
-    return jsonify({ '_deteccion': repo.detecciones_error_sellst() })
+    return jsonify({ '_deteccion': repo.detecciones_error_sellst() ,
+                    '_detecciones': repo.detecciones_Sellst() })
 
 @detection_bp.route('/api/marcar_error', methods=['POST'])
 def marcar_error():

@@ -160,6 +160,14 @@ def deteccion_dlt(id):
 
 
 # ----- Listar el top 10 de las detecciones
+def detecciones_Sellst():
+    try:
+        response = supabase.table("detecciones").select("*").execute()
+        return response.data if response.data else []
+    except Exception as e:
+        print(f"Error en listar las detecciones: {e}")
+        return [] 
+
 def detecciones_error_sellst():
     try:
         errores = supabase.table("errores_clasificacion").select("deteccion_id").execute()
