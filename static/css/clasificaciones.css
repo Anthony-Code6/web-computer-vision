@@ -1,0 +1,13 @@
+.btn-sm.dropdown-toggle {
+    background: white;
+    color: black;
+}
+
+.dropdown-item {
+    text-align: center;
+}
+
+.dropdown-item:hover {
+    color: black;
+    background: white;
+}

@@ -1,0 +1,43 @@
+p {
+    margin-bottom: 4px;
+}
+
+.filtro {
+    margin-top: 13px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.filtro #reporte-fecha {
+    width: min-content;
+}
+
+#informe {
+    display: flex;
+    margin-top: 10px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    padding: 11px;
+}
+
+#informe #detalles {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: center;
+    gap: 5px;
+}
+
+h5 {
+    display: block;
+    text-align: center;
+}
+
+.reporte {
+    background-color: #60a5fa !important;
+}
+
+#exportar-pdf {
+    background-color: #f87171 !important;
+}

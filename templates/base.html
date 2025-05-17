@@ -6,20 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>V.I.F.T - {% block title %}{% endblock %}</title>
     <!-- Css -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='plugins/bootstrap/css/bootstrap.min.css') }}">
     <!-- Js -->
-    <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     <!-- Iconos -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap.bundle.min.js">
     <!-- Html2Pdf -->
-    <script src="{{ url_for('static', filename='html2pdf/html2pdf.bundle.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='plugins/html2pdf/html2pdf.bundle.min.js') }}"></script>
     <!-- Sweetalert -->
-    <script src="{{ url_for('static', filename='sweetalert/sweetalert.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='plugins/sweetalert/sweetalert.min.js') }}"></script>
     <!-- Chart JS -->
-    <script src="{{ url_for('static', filename='chartjs/chart.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='plugins/chartjs/chart.min.js') }}"></script>
     <!-- PDF -->
-    <script src="{{ url_for('static', filename='pdf/html2canvas.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='pdf/jspdf.umd.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='plugins/pdf/html2canvas.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='plugins/pdf/jspdf.umd.min.js') }}"></script>
     {% block extra_styles %}{% endblock %}
     <style>
         nav {
@@ -34,7 +34,7 @@
     <nav class="navbar navbar-expand-lg bg-dark" data-bs-theme="dark">
         <div class="container-fluid">
             <a class="navbar-brand" href="/home">VIFT</a>
-            <button class="navbar-toggler" type="button" style="border: none;" data-bs-toggle="collapse"
+            <button class="navbar-toggler shadow-none" type="button" style="border: none;" data-bs-toggle="collapse"
                 data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
                 aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
