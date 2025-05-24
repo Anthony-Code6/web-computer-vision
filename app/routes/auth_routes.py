@@ -7,7 +7,7 @@ def login():
     if request.method == 'POST':
         email = request.form.get('email')
         password = request.form.get('password')
-        if email == "test@gmail.com" and password == "123123":
+        if email == "admin_fungi@gmail.com" and password == "123123":
             session['usuario'] = email
             return redirect(url_for('main.index'))
         return render_template('login.html', error="Credenciales invalidas")

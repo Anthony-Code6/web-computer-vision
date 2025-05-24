@@ -43,7 +43,7 @@ async function startCamera() {
           } catch (err) {
             console.error("Error procesando el frame:", err);
           }
-        }, 2000);
+        }, 5000);
       })
       .catch((err) => {
         console.error("Error al acceder a la cámara: ", err);

@@ -84,7 +84,7 @@ function mostrarGrafico(data, labels, values) {
             datasets: [{
                 label: 'Errores por tipo',
                 data: values,
-                backgroundColor: ['#f87171', '#60a5fa'], // colores ejemplo
+                backgroundColor: ['#FFA500', '#FF8C00', '#FFD580', '#FF6347'], // colores ejemplo
                 borderRadius: 5
             }]
         },

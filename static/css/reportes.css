@@ -1,43 +1,72 @@
-p {
-    margin-bottom: 4px;
-}
-
 .filtro {
     margin-top: 13px;
     display: flex;
-    gap: 10px;
+    gap: 12px;
     justify-content: center;
+    flex-wrap: wrap;
 }
 
-.filtro #reporte-fecha {
-    width: min-content;
+.filtro input,
+.filtro button {
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+#reporte-fecha {
+    padding: 4px 10px;
+    border: 1px solid #ddd;
+    max-width: 200px;
+}
+
+.reporte {
+    background-color: #FFA500 !important;
+    color: white;
+    border: none;
+    transition: background 0.3s ease;
+}
+
+.reporte:hover {
+    background-color: #FF8C00 !important;
+}
+
+#exportar-pdf {
+    background-color: #DC3545 !important;
+    border: none;
+    color: white;
+    transition: background 0.3s ease;
+}
+
+#exportar-pdf:hover {
+    background-color: #c82333 !important;
 }
 
 #informe {
     display: flex;
+    flex-direction: column;
+    align-items: center;
     margin-top: 10px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    padding: 11px;
+    border-radius: 12px;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.15);
+    padding: 16px;
+    background: #fffaf0;
 }
 
-#informe #detalles {
+#informe h5 {
+    text-align: center;
+    font-weight: bold;
+    color: #FF8C00;
+}
+
+#detalles {
     display: flex;
     flex-wrap: wrap;
-    flex-direction: row;
     justify-content: center;
-    gap: 5px;
+    gap: 8px;
+    margin-bottom: 12px;
 }
 
-h5 {
-    display: block;
-    text-align: center;
-}
-
-.reporte {
-    background-color: #60a5fa !important;
-}
-
-#exportar-pdf {
-    background-color: #f87171 !important;
+canvas#grafico-errores {
+    width: 100% !important;
+    height: auto !important;
+    max-width: 100%;
 }

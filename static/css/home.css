@@ -1,0 +1,30 @@
+a.card {
+    background: white;
+    border: 1px solid #FFA500;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: inherit;
+    height: 100%;
+    overflow: hidden;
+    transform: translateY(0);
+}
+
+a.card:hover {
+    background: #FFF5E6;
+    box-shadow: 0 8px 16px rgba(255, 140, 0, 0.2);
+    transform: translateY(-5px);
+}
+
+.item-card {
+    padding: 2rem 1rem;
+    text-align: center;
+}
+
+.item-card .card-title {
+    font-size: 1.25rem;
+    color: #FF8C00;
+    font-weight: 600;
+    margin-top: 0.5rem;
+}

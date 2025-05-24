@@ -2,47 +2,7 @@
 {% block title %}Detección de Hongos{% endblock %}
 
 {% block extra_styles %}
-<style>
-    .content-title {
-        text-align: center;
-    }
-
-
-    #videoContainer {
-        max-width: 100%;
-        display: flex;
-        justify-content: center;
-    }
-
-    video {
-        width: 100%;
-        max-width: 100%;
-        height: auto;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-        margin-top: 1rem;
-        border: 3px solid transparent;
-        transition: border 0.3s ease-in-out;
-    }
-
-    .video-active {
-        border-color: #28a745;
-    }
-
-    #detectionsContainer {
-        margin-top: 1rem;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        justify-content: center;
-    }
-
-    .detection-img {
-        max-width: 250px;
-        border: 2px solid #ccc;
-        border-radius: 8px;
-    }
-</style>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/video_detector.css') }}">
 {% endblock %}
 
 {% block content %}
@@ -61,6 +21,7 @@
             <li>Para comenzar con la detección, presiona el botón "Iniciar".</li>
             <li>La detección se realiza automáticamente:
                 <ul>
+                    <li>Cada captura se realizara cada 5s.</li>
                     <li>Solo se guardarán imágenes donde se detecte un tangelo afectado o sano.</li>
                     <li>Las imágenes sin detección serán descartadas.</li>
                 </ul>
