@@ -24,8 +24,8 @@ def index():
 #     historial = repo.historial_sellst()
 #     return render_template('importar.html', historial=historial)
 
-@main_bp.route('/revisar')
-def revisar():
+@main_bp.route('/detecciones')
+def detecciones():
     return render_template("detecciones.html")
 
 @main_bp.route('/reportes')
