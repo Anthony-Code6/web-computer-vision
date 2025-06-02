@@ -51,7 +51,6 @@ const renderizarClasificaciones = (data) => {
             </tr>
         `;
   }
-
   contenedor.innerHTML = information;
 };
 

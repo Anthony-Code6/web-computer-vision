@@ -43,19 +43,15 @@ document.addEventListener("DOMContentLoaded", cargarDetecciones);
 
 const renderizarDetecciones = (data) => {
   let information = "";
-
   if (data.length > 0) {
     data.forEach((element, index) => {
       let i = index + 1;
       let confianza = Math.floor(element.confianza);
-
       information += `
           <tr>
               <td>${i}</td>
               <td class="text-center">
-                <button type="button" class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#model_imagen" onclick="ViewModal('${
-                  element.imagen_url
-                }')">
+                <button type="button" class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#model_imagen" onclick="ViewModal('${element.imagen_url}')">
                   Imagen
                 </button>
               </td>
@@ -63,18 +59,9 @@ const renderizarDetecciones = (data) => {
               <td> ${confianza + "%"}</td>
               <td>${element.fecha}</td>
               <td>
-                    ${
-                      element.estado
-                        ? `
-                      <div class="estado_hongo">
-                        Hongo
-                      </div>
-                      `
-                        : `
-                      <div class="estado_sano">
-                        Sano
-                      </div>
-                      `
+                    ${ element.estado
+                        ? ` <div class="estado_hongo">Hongo</div>`
+                        : `<div class="estado_sano">Sano </div>`
                     }
               </td>
               <td>
@@ -82,27 +69,21 @@ const renderizarDetecciones = (data) => {
                       <a class="btn btn-secondary btn-sm dropdown-toggle" href="javascript:void(0)" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                           Acción
                       </a>
-  
                       <ul class="dropdown-menu">
                         <li>
-                          <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop" onclick="Clasificar('${
-                            element.id
-                          }')">
+                          <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop" onclick="Clasificar('${element.id}')">
                             Clasificar
                           </a>
                         </li>
                         <li>
-                          <a class="dropdown-item" href="javascript:void(0)" onclick="eliminarDeteccion(${index},${
-        element.id
-      },'${element.imagen_url}')">
+                          <a class="dropdown-item" href="javascript:void(0)" onclick="eliminarDeteccion(${index},${element.id},'${element.imagen_url}')">
                             Eliminar
                           </a>
                         </li>
                       </ul>
                   </div>
               </td>
-          </tr>
-  `;
+          </tr>`;
     });
   } else {
     cargarDetecciones();
@@ -203,12 +184,9 @@ const eliminarDeteccion = async (index, id, imagen_url) => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ id, imagen_url }),
         });
-
         const result = await res.json();
-
         if (res.ok) {
           if (index !== -1) listaDetecciones.splice(index, 1);
-
           renderizarDetecciones(listaDetecciones);
         } else {
           swal("Error !", result.message, "error");

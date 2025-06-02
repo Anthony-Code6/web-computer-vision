@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, Response, jsonify, request
-from app.repositories import supabase_repository as repo
+from app.repositories import clasificaciones_repository as repo
 
 clasificacion_bp = Blueprint('clasificacion', __name__)
 

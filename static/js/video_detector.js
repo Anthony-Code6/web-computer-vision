@@ -38,7 +38,7 @@ async function startCamera() {
               img.src = data.image;
               img.alt = "Resultado de detección";
               img.classList.add("detection-img");
-              detectionsContainer.prepend(img); // Mostrar la detección más reciente primero
+              detectionsContainer.prepend(img);
             }
           } catch (err) {
             console.error("Error procesando el frame:", err);

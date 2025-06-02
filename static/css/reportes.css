@@ -33,7 +33,7 @@
     background-color: #DC3545 !important;
     border: none;
     color: white;
-    transition: background 0.3s ease;
+    transition: all 0.3s ease;
 }
 
 #exportar-pdf:hover {

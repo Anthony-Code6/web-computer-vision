@@ -1,20 +1,19 @@
 const input_fecha = document.getElementById("reporte-fecha")
-const exportar_pdf = document.getElementById('exportar-pdf')
-exportar_pdf.style.display='none'
 const detalles = document.getElementById('detalles')
 const view_informe = document.getElementById('informe')
 view_informe.style.display = 'none'
 
+const exportar_pdf = document.getElementById('exportar-pdf')
+exportar_pdf.style.display='none'
 exportar_pdf.addEventListener('click', async () => {
     const fecha = input_fecha.value;
     const { jsPDF } = window.jspdf;
 
     const canvasContainer = document.getElementById("informe");
 
-    // Aumentar resoluci�n del canvas para mejor calidad
     const canvasImg = await html2canvas(canvasContainer, {
-        scale: 2, // renderiza en mayor resoluci�n
-        useCORS: true // por si hay im�genes externas
+        scale: 2, 
+        useCORS: true 
     });
 
     const imgData = canvasImg.toDataURL("image/png");
@@ -76,7 +75,6 @@ function mostrarGrafico(data, labels, values) {
     if (window.graficoExistente) {
         window.graficoExistente.destroy();
     }
-
     window.graficoExistente = new Chart(ctx, {
         type: 'bar',
         data: {
@@ -84,7 +82,7 @@ function mostrarGrafico(data, labels, values) {
             datasets: [{
                 label: 'Errores por tipo',
                 data: values,
-                backgroundColor: ['#FFA500', '#FF8C00', '#FFD580', '#FF6347'], // colores ejemplo
+                backgroundColor: ['#FFA500', '#FF8C00', '#FFD580', '#FF6347'],
                 borderRadius: 5
             }]
         },

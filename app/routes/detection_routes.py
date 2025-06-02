@@ -1,6 +1,9 @@
 from flask import Blueprint, render_template, Response, jsonify, request
 from app.services.detector_service import analizar_imagen_base64
-from app.repositories import supabase_repository as repo
+from app.repositories import clasificaciones_repository as repo_clasificacion
+from app.repositories import detecciones_repository as repo_deteccion
+from app.services import storage_service as storage
+from app.services import reportes_service as reporte
 
 detection_bp = Blueprint('detection', __name__)
 
@@ -17,28 +20,28 @@ def analizar_frame():
 
 @detection_bp.route('/api/list-detections')
 def listDetections():
-    return jsonify({ '_deteccion': repo.detecciones_error_sellst() ,
-                    '_detecciones': repo.detecciones_Sellst() })
+    return jsonify({ '_deteccion': repo_clasificacion.detecciones_error_sellst() ,
+                    '_detecciones': repo_deteccion.detecciones_Sellst() })
 
 @detection_bp.route('/api/marcar_error', methods=['POST'])
 def marcar_error():
     data = request.get_json()
-    repo.clasificacion_ins(data['deteccion_id'], data['tipo_error'], data['comentario'])
+    repo_clasificacion.clasificacion_ins(data['deteccion_id'], data['tipo_error'], data['comentario'])
     return jsonify({"status": "ok"}), 201
 
 @detection_bp.route('/api/eliminar-deteccion', methods=['POST'])
 def eliminar_deteccion():
     data = request.get_json()
     try:
-        repo.deteccion_dlt(data['id'])
-        repo.delete_imagen(data['imagen_url'].split('/')[-1])
+        repo_deteccion.deteccion_dlt(data['id'])
+        storage.delete_imagen(data['imagen_url'].split('/')[-1])
         return jsonify({"success": True})
     except Exception as e:
         return jsonify({"success": False, "message": str(e)}), 500
 
 @detection_bp.route('/api/reporte-fecha/<fecha_str>')
 def generar_reporte(fecha_str):
-    data = repo.reporte_fecha_chartjs(fecha_str)
+    data = reporte.reporte_fecha_chartjs(fecha_str)
     if data:
         return jsonify(data)
     return jsonify({"error": "No se pudo generar el reporte"})

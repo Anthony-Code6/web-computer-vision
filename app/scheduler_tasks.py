@@ -1,4 +1,5 @@
-from .repositories.supabase_repository import detecciones_url_sellst, file_sellst, delete_imagen
+from .repositories.detecciones_repository import detecciones_url_sellst
+from .services.storage_service import file_sellst,delete_imagen
 from flask_apscheduler import APScheduler
 
 scheduler = APScheduler()

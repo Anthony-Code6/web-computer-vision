@@ -4,11 +4,13 @@ import threading
 import time
 from PIL import Image
 from io import BytesIO
+import os
 import base64
 import mediapipe as mp
 from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
-from app.repositories import supabase_repository as repo
+from app.repositories import detecciones_repository as repo
+from app.services import storage_service as storage
 
 # Constantes visuales
 MARGIN = -1
@@ -18,9 +20,8 @@ FONT_THICKNESS = 1
 rect_color_GREEN = (66, 255, 0)
 rect_color_RED = (227, 7, 34)
 TEXT_COLOR = (255, 255, 255)
-
-# Modelo MediaPipe
-model_path = repo.download_model()
+# Modelo //repo.download_model()
+model_path =  os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'models', 'best.tflite'))
 base_options = python.BaseOptions(model_asset_path=model_path)
 options = vision.ObjectDetectorOptions(base_options=base_options, score_threshold=0.5)
 detector = vision.ObjectDetector.create_from_options(options)
@@ -29,10 +30,10 @@ def save_task(frame, estado, confianza, tiempo_procesamiento):
     import uuid
     estado_bool = True if estado.upper() == "HONGO" else False
     nombre_imagen = f"{uuid.uuid4()}.jpg"
-    url = repo.upload_imagen(frame, nombre_imagen)
-    #print('URL DE LA IMAGEN SUBIDA A SUPABASE')
-    #print(url)
-    repo.detecciones_ins(estado_bool, confianza, url, tiempo_procesamiento)
+    url = storage.upload_imagen(frame, nombre_imagen)
+    respuesta = repo.detecciones_ins(estado_bool, confianza, url, tiempo_procesamiento)
+    if respuesta:
+        print(respuesta['id'])
 
 def analizar_imagen_base64(image_base64):
     image_data = image_base64.split(',')[1]

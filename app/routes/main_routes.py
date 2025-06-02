@@ -1,7 +1,5 @@
 from flask import Blueprint, render_template, request, redirect
 from app.utils.helpers import login_required
-from app.repositories import supabase_repository as repo
-import os
 
 main_bp = Blueprint('main', __name__)
 
