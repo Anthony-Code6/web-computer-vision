@@ -48,7 +48,6 @@ def generar_reporte(fecha_str):
         if data:
             return jsonify(data)
         else:
-            # En caso de que la función retorne None explícitamente
             return jsonify({
                 "fecha": fecha_str,
                 "total_detecciones": 0,
