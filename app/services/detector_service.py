@@ -10,6 +10,7 @@ import mediapipe as mp
 from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
 from app.repositories import detecciones_repository as repo
+from app.repositories import clasificaciones_repository as repo_clasificacion
 from app.services import storage_service as storage
 
 # Constantes visuales
@@ -33,7 +34,11 @@ def save_task(frame, estado, confianza, tiempo_procesamiento):
     url = storage.upload_imagen(frame, nombre_imagen)
     respuesta = repo.detecciones_ins(estado_bool, confianza, url, tiempo_procesamiento)
     if respuesta:
-        print(respuesta['id'])
+        print(respuesta)
+        if float(respuesta['confianza']) > 70 :
+            comentario = 'Se a encontrado hongo en el fruto del tangelo' if respuesta['estado'] == True else 'No se a encontrado ningun hongo en el fruto del tangelo'
+            repo_clasificacion.clasificacion_ins(respuesta['id'],'Verdadero Positivo',comentario)
+
 
 def analizar_imagen_base64(image_base64):
     image_data = image_base64.split(',')[1]
@@ -53,7 +58,7 @@ def analizar_imagen_base64(image_base64):
         category_name = category.category_name
         probability = round(category.score, 2)
 
-        status_category_name = category_name if probability > 0.7 else 'SIN_HONGO'
+        status_category_name = category_name if probability > 0.5 else 'SIN_HONGO'
         result_text = f"{category_name} ({probability})"
 
         color = rect_color_GREEN if status_category_name == 'SIN_HONGO' else rect_color_RED

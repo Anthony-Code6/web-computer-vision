@@ -39,9 +39,42 @@ def eliminar_deteccion():
     except Exception as e:
         return jsonify({"success": False, "message": str(e)}), 500
 
+
+
 @detection_bp.route('/api/reporte-fecha/<fecha_str>')
 def generar_reporte(fecha_str):
-    data = reporte.reporte_fecha_chartjs(fecha_str)
-    if data:
-        return jsonify(data)
-    return jsonify({"error": "No se pudo generar el reporte"})
+    try:
+        data = reporte.reporte_fecha_chartjs(fecha_str)
+        if data:
+            return jsonify(data)
+        else:
+            # En caso de que la función retorne None explícitamente
+            return jsonify({
+                "fecha": fecha_str,
+                "total_detecciones": 0,
+                "total_errores": 0,
+                "errores_por_tipo": {
+                    "Falso Positivo": 0,
+                    "Falso Negativo": 0,
+                    "Verdadero Positivo": 0,
+                    "Verdadero Negativo": 0
+                },
+                "detecciones": [],
+                "errores": []
+            })
+    except Exception as e:
+        print(f"Error en API reporte-fecha: {e}")
+        return jsonify({
+            "fecha": fecha_str,
+            "total_detecciones": 0,
+            "total_errores": 0,
+            "errores_por_tipo": {
+                "Falso Positivo": 0,
+                "Falso Negativo": 0,
+                "Verdadero Positivo": 0,
+                "Verdadero Negativo": 0
+            },
+            "detecciones": [],
+            "errores": [],
+            "error": "No se pudo generar el reporte"
+        }), 500

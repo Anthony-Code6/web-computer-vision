@@ -2,16 +2,20 @@ from configs.supabase_config import supabase
 
 def reporte_fecha_chartjs(fecha_str):
     try:
-        print(fecha_str)
-        # Obtener todas las detecciones en esa fecha
         resp_detecciones = supabase.table("detecciones").select("*").eq("fecha", fecha_str).execute()
+        print(resp_detecciones)
         detecciones = resp_detecciones.data
         total_detecciones = len(detecciones)
 
         ids = [d["id"] for d in detecciones]
 
         total_errores = 0
-        errores_por_tipo = {}
+        errores_por_tipo = {
+            "Falso Positivo": 0,
+            "Falso Negativo": 0,
+            "Verdadero Positivo": 0,
+            "Verdadero Negativo": 0
+        }
         errores = []
 
         if ids:
@@ -21,7 +25,10 @@ def reporte_fecha_chartjs(fecha_str):
 
             for err in errores:
                 tipo = err["tipo_error"]
-                errores_por_tipo[tipo] = errores_por_tipo.get(tipo, 0) + 1
+                if tipo in errores_por_tipo:
+                    errores_por_tipo[tipo] += 1
+                else:
+                    errores_por_tipo[tipo] = 1  # Para manejar cualquier nuevo tipo no esperado
 
         return {
             "fecha": fecha_str,
