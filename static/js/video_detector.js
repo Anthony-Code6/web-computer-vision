@@ -5,8 +5,12 @@ let intervalId = null;
 
 async function startCamera() {
   if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-    navigator.mediaDevices
-      .getUserMedia({ video: true })
+    //navigator.mediaDevices
+    //.getUserMedia({ video: true })
+
+    navigator.mediaDevices.getUserMedia({
+      video: { facingMode: "environment" } // móvil: trasera si está; escritorio: default
+    })
       .then((stream) => {
         currentStream = stream;
         videoFeed.srcObject = stream;
