@@ -7,14 +7,14 @@ def file_sellst():
         archivos_bucket = supabase.storage.from_(BUCKET_HONGO).list()
         return archivos_bucket
     except Exception as e:
-        print('Error al listar los archivos: {e}')
+        #print('Error al listar los archivos: {e}')
         return []
 
 
 def delete_imagen(file):
     try:
         supabase.storage.from_(BUCKET_HONGO).remove([file])
-        print('Archivo eliminado:', file)
+        #print('Archivo eliminado:', file)
     except Exception as e:
         print(f"Error al eliminar imagen de Supabase: {e}")
         raise

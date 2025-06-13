@@ -1,12 +1,9 @@
 import os
 from supabase import create_client
 
-SUPABASE_URL = "https://ptmhxjbqghsylnxexchk.supabase.co" 
-#os.getenv("SUPABASE_URL", "https://ptmhxjbqghsylnxexchk.supabase.co")
+SUPABASE_URL = "https://ptmhxjbqghsylnxexchk.supabase.co"
+# "https://brpcujpteqzoibejyuwk.supabase.co"
 SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB0bWh4amJxZ2hzeWxueGV4Y2hrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDYxNDI4MTcsImV4cCI6MjA2MTcxODgxN30.rOwrsSqcEmqGvf95SUTSRoP5FlJ7heGboF2CChuqkyI"
-#os.getenv("SUPABASE_KEY", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")
-
-# BUCKET_MODELOS = "model"
+# "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJycGN1anB0ZXF6b2liZWp5dXdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkzMjE4MjAsImV4cCI6MjA2NDg5NzgyMH0.KkNE-ga_BnblPJeh-aNgzZYcID8UmPBbni8r5dDKvnA"
 BUCKET_HONGO = "detecciones"
-
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)

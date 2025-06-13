@@ -3,7 +3,7 @@ from configs.supabase_config import supabase
 def reporte_fecha_chartjs(fecha_str):
     try:
         resp_detecciones = supabase.table("detecciones").select("*").eq("fecha", fecha_str).execute()
-        print(resp_detecciones)
+        #print(resp_detecciones)
         detecciones = resp_detecciones.data
         total_detecciones = len(detecciones)
 
@@ -39,5 +39,5 @@ def reporte_fecha_chartjs(fecha_str):
             "errores": errores
         }
     except Exception as e:
-        print(f'Error generar reporte {e}')
+        #print(f'Error generar reporte {e}')
         return

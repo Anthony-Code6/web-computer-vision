@@ -7,7 +7,7 @@ scheduler = APScheduler()
 @scheduler.task('interval', id='limpiar_archivos', minutes=10)
 def limpiar_imagenes_no_usadas():
     try:
-        print('Ejecutando limpieza de archivos no usados.')
+        #print('Ejecutando limpieza de archivos no usados.')
         filename = detecciones_url_sellst()
         filestore = file_sellst()
 
