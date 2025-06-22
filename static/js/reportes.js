@@ -44,7 +44,7 @@ const GenerarReporte = async () => {
   const resp = await fetch(`/api/reporte-fecha/${fecha}`);
   const data = await resp.json();
 
-  console.log(data);
+  // console.log(data);
 
   if (data.detecciones.length > 0) {
     exportar_pdf.style.display = "block";

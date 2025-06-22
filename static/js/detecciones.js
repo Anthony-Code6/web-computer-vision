@@ -19,7 +19,7 @@ tabla_sin_clasificado.style.display = "block";
 const cargarDetecciones = async () => {
   const response = await fetch("/api/list-detections", { method: "GET" });
   const datos = await response.json();
-  console.log(datos);
+  // console.log(datos);
 
   listaDetecciones = [];
 

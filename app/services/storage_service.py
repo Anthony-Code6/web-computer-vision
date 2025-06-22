@@ -1,4 +1,3 @@
-import os
 import cv2
 from configs.supabase_config import supabase,SUPABASE_URL,BUCKET_HONGO
 
@@ -10,7 +9,6 @@ def file_sellst():
         #print('Error al listar los archivos: {e}')
         return []
 
-
 def delete_imagen(file):
     try:
         supabase.storage.from_(BUCKET_HONGO).remove([file])
@@ -18,7 +16,6 @@ def delete_imagen(file):
     except Exception as e:
         print(f"Error al eliminar imagen de Supabase: {e}")
         raise
-
 
 def upload_imagen(frame,nombre_archivo):
     ruta_local = f"/tmp/{nombre_archivo}"

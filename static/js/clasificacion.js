@@ -5,7 +5,7 @@ const contenedor = document.getElementById("tabla_clasificacion");
 const LoadClasificacion = async () => {
   const response = await fetch("/api/list-clasificacion", { method: "GET" });
   const data = await response.json();
-  console.log(data);
+  // console.log(data);
 
   listClasificacion = [];
   data._clasificacion.forEach((element) => {
