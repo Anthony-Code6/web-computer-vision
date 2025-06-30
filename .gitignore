@@ -1,3 +1,4 @@
+.vscode/
 .vscode/settings.json
 venv/
 __pycache__/
@@ -6,3 +7,4 @@ app/repositories/__pycache__/
 app/services/__pycache__/
 app/utils/__pycache__/
 configs/__pycache__/
+.deplyment
